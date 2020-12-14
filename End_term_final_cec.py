@@ -51,6 +51,88 @@ def knn_train(m, x_train, y_train):
         # append these to the predictions list 
         #predictions.append(m[1][best_match_index])
     #return predictions
+    
+# Nearest neighbor =3 
+def knn_predict(m, x_test):
+    # create an empty list to store the predictions
+    predictions = []
+    # for each datapoint in x_test
+    for i in range(len(x_test)):
+        # Create empty lists to store all potential matches (closest neighbors)
+        # and their corresponding index
+        potential_matches = []
+        potential_matches_index = []
+        #for each point in the first list of m (which is the training data points/values)
+        for j in range(len(m[0])):
+            # calculate the euclidean distance betweeen that test explanatory variable, and each 
+            # test variable 
+            d = distance_euc(m[0][j], x_test[i])
+            # append all pairwise euclidean distances to potential match list 
+            potential_matches.append(d)
+            # and their index in m[0] to match index list
+            potential_matches_index.append(j)
+        # create empty list to store the closest matches (based on calculated distances)
+        nearest_neighbors = []
+        #print(potential_matches)
+        # First closest neighbor
+        # find the minimum value in potential match list (the smallest distance) and save to p
+        p = min(potential_matches)
+        #print(p)
+        # add this value to nearest neighbor list
+        nearest_neighbors.append(p)
+        #print(nearest_neighbors)
+        # create empty nearest neighbor index list
+        near_neighbor_index = []
+        # get the index of that smallest distance (p) from the list of all potential matches (all distances)
+        n = potential_matches.index(p)
+        # add to index list 
+        near_neighbor_index.append(n)
+        #print(near_neighbor_index)
+        # remove that minumum value from the distances list, so as to find the next closest/min value
+        potential_matches.remove(p)
+        #print(potential_matches)
+        #Second closest neighbor
+        p = min(potential_matches)
+        nearest_neighbors.append(p)
+        n = potential_matches.index(p)
+        near_neighbor_index.append(n)
+        # remove that minumum value from the list, so as to find the next closest/min value
+        potential_matches.remove(p)
+        # Third closest neighbor (k=3)
+        p = min(potential_matches)
+        nearest_neighbors.append(p)
+        #print(nearest_neighbors)
+        n = potential_matches.index(p)
+        near_neighbor_index.append(n)
+        #print(near_neighbor_index)
+        # Create empty list to hold species labels of these 3 closest datapoints
+        species_predict = []
+        # for each value in the nearest neighbor index list 
+        for i in range(len(near_neighbor_index)):
+            # get the species label of that nearest neighbor/closest datapoint from the second list in list m
+            s = m[1][near_neighbor_index[i]]
+            # save to list
+            species_predict.append(s)
+            #print(species_predict)
+        # Next: need to get the most frequent class (species) in this list of 3
+        # that will be the prediction 
+        # set counter to 0
+        counter = 0
+        predict = species_predict[0] 
+        # for each species label in species predict (so 3)
+        for i in species_predict: 
+            # count the occurences of that species label
+            species_frequency = species_predict.count(i) 
+            # if the occurencees/frequency are greater than 0 (or the current value of the counter; see below)
+            if(species_frequency > counter): 
+                # set the counter to the number of occurences 
+                counter = species_frequency
+                # and set the prediction to that species label
+                predict = i 
+        # append all species predictions to the final predictions list 
+        predictions.append(predict)
+    # return these predictions
+    return predictions
 
 # (4) Define the data structure for the model and use these functions to train the model on the data in "iris_train.tsv", then predict the labels for the test data in "iris_test.tsv" and print them.
 
